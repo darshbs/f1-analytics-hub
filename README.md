@@ -1,4 +1,4 @@
-# <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" height="30"/> F1 ANALYTICS HUB
+# <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" height="30"/> F1 ANALYTICS HUB - FAH
 
 <div align="center">
 
