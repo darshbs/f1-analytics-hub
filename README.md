@@ -189,11 +189,10 @@ Combining a passion for Formula 1 with real-world data engineering — FastF1 te
 
 <div align="center">
 
-**Built with ❤️ for F1 🏎 and data.**
 
 *This project is not affiliated with Formula 1, the FIA, or any F1 team.*
 *All data is sourced from the publicly available FastF1 library and Jolpica-F1 API.*
 
-**Made by an F1 fan for F1 fans ❤️**
+**Made by an F1 fan with love for the sport and data - for F1 fans ❤️**
 
 </div>
