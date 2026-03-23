@@ -1,0 +1,67 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from database import get_connection
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/api/races")
+def get_races(year: int = 2024):
+    conn = get_connection()
+    races = conn.execute(
+        "SELECT * FROM races WHERE year = ? ORDER BY round", (year,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in races]
+
+@app.get("/api/driver-standings")
+def get_driver_standings(year: int = 2024):
+    conn = get_connection()
+    standings = conn.execute('''
+        SELECT 
+            driver_name,
+            driver_code,
+            team_name,
+            SUM(points) as total_points,
+            COUNT(CASE WHEN CAST(position AS INTEGER) = 1 THEN 1 END) as wins,
+            COUNT(CASE WHEN CAST(position AS INTEGER) <= 3 THEN 1 END) as podiums,
+            COUNT(*) as races,
+            COUNT(CASE WHEN status NOT LIKE '%Lap%' 
+                  AND status != 'Finished' 
+                  AND status NOT LIKE '%+%' THEN 1 END) as dnfs
+        FROM results
+        JOIN races ON results.race_id = races.id
+        WHERE races.year = ?
+        GROUP BY driver_code
+        ORDER BY total_points DESC
+    ''', (year,)).fetchall()
+    conn.close()
+    return [dict(s) for s in standings]
+
+@app.get("/api/team-standings")
+def get_team_standings(year: int = 2024):
+    conn = get_connection()
+    standings = conn.execute('''
+        SELECT
+            team_name,
+            SUM(points) as total_points,
+            COUNT(CASE WHEN CAST(position AS INTEGER) = 1 THEN 1 END) as wins,
+            COUNT(CASE WHEN CAST(position AS INTEGER) <= 3 THEN 1 END) as podiums,
+            COUNT(CASE WHEN status NOT LIKE '%Lap%' 
+                  AND status != 'Finished'
+                  AND status NOT LIKE '%+%' THEN 1 END) as dnfs,
+            COUNT(DISTINCT race_id) as races
+        FROM results
+        JOIN races ON results.race_id = races.id
+        WHERE races.year = ?
+        GROUP BY team_name
+        ORDER BY total_points DESC
+    ''', (year,)).fetchall()
+    conn.close()
+    return [dict(s) for s in standings]

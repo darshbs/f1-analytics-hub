@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Analytics PoC</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #e10600;
+        }
+
+        /* F1 Red */
+        .driver-card {
+            background: #333;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Formula 1 Analytics Hub</h1>
+    <h2 id="race-title">Loading race data...</h2>
+    <div id="podium-container"></div>
+
+    <script>
+        // Fetch data from your Python backend
+        fetch('http://127.0.0.1:8000/api/latest-podium')
+            .then(response => response.json())
+            .then(data => {
+                // Update the title
+                document.getElementById('race-title').innerText = data.race + " Podium";
+
+                // Build the driver cards
+                const container = document.getElementById('podium-container');
+                data.podium.forEach(driver => {
+                    const card = document.createElement('div');
+                    card.className = 'driver-card';
+                    card.innerHTML = `<strong>P${driver.position}</strong>: ${driver.driver} (${driver.team})`;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error fetching telemetry:', error));
+    </script>
+</body>
+
+</html>
