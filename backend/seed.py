@@ -70,4 +70,4 @@ def seed_season(year: int):
     print(f"\n✅ {year} season seeded successfully!")
 
 if __name__ == "__main__":
-    seed_season(2024)  # Start with 2024, add more years later
+    seed_season(2022)

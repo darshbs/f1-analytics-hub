@@ -141,13 +141,37 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+function YearSelector({ year, setYear }) {
+  return (
+    <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+      <span style={{ color: "#555", fontSize: "0.75rem", letterSpacing: "2px" }}>SEASON</span>
+      {[2020, 2021, 2022, 2023, 2024].map(y => (
+        <button key={y} onClick={() => setYear(y)} style={{
+          padding: "4px 14px",
+          background: year === y ? "#e10600" : "transparent",
+          color: year === y ? "#fff" : "#555",
+          border: year === y ? "none" : "1px solid #2a2a2a",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontWeight: year === y ? 700 : 400,
+          fontSize: "0.85rem",
+          transition: "all 0.2s"
+        }}>
+          {y}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── DRIVERS PAGE ─────────────────────────────────────────────────────────────
 function DriversPage() {
   const [data, setData] = useState([]);
+  const [year, setYear] = useState(2024);
 
   useEffect(() => {
-    axios.get(`${API}/api/driver-standings?year=2024`).then(r => setData(r.data));
-  }, []);
+    axios.get(`${API}/api/driver-standings?year=${year}`).then(r => setData(r.data));
+  }, [year]);
 
   const chartData = data.slice(0, 10).map(d => ({
     name: d.driver_code,
@@ -157,8 +181,8 @@ function DriversPage() {
 
   return (
     <div style={styles.page}>
+      <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
-        {/* Points Bar Chart */}
         <div style={styles.card}>
           <div style={styles.cardTitle}>Points — Top 10 Drivers</div>
           <ResponsiveContainer width="100%" height={260}>
@@ -167,15 +191,11 @@ function DriversPage() {
               <YAxis tick={{ fill: "#888", fontSize: 11 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="Points" radius={[4, 4, 0, 0]}>
-                {chartData.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
-                ))}
+                {chartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Wins Bar Chart */}
         <div style={styles.card}>
           <div style={styles.cardTitle}>Race Wins — Top 10 Drivers</div>
           <ResponsiveContainer width="100%" height={260}>
@@ -197,10 +217,8 @@ function DriversPage() {
           </ResponsiveContainer>
         </div>
       </div>
-
-      {/* Driver Standings Table */}
       <div style={styles.card}>
-        <div style={styles.cardTitle}>2024 Driver Championship</div>
+        <div style={styles.cardTitle}>{year} Driver Championship</div>
         <table style={styles.table}>
           <thead>
             <tr>
@@ -214,10 +232,7 @@ function DriversPage() {
               <tr key={d.driver_code}>
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                 <td style={styles.td(i)}><strong>{d.driver_name}</strong></td>
-                <td style={styles.td(i)}>
-                  <span style={styles.teamDot(d.team_name)} />
-                  {d.team_name}
-                </td>
+                <td style={styles.td(i)}><span style={styles.teamDot(d.team_name)} />{d.team_name}</td>
                 <td style={styles.td(i)}><span style={styles.statBadge("#e10600")}>{d.total_points}</span></td>
                 <td style={styles.td(i)}>{d.wins}</td>
                 <td style={styles.td(i)}>{d.podiums}</td>
@@ -235,41 +250,30 @@ function DriversPage() {
 // ── TEAMS PAGE ────────────────────────────────────────────────────────────────
 function TeamsPage() {
   const [data, setData] = useState([]);
+  const [year, setYear] = useState(2024);
 
   useEffect(() => {
-    axios.get(`${API}/api/team-standings?year=2024`).then(r => setData(r.data));
-  }, []);
+    axios.get(`${API}/api/team-standings?year=${year}`).then(r => setData(r.data));
+  }, [year]);
 
   const pieData = data.map(t => ({ name: t.team_name, value: t.total_points }));
 
   return (
     <div style={styles.page}>
+      <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
-        {/* Pie Chart */}
         <div style={styles.card}>
           <div style={styles.cardTitle}>Points Distribution by Constructor</div>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%" cy="50%"
-                innerRadius={60} outerRadius={100}
-                paddingAngle={3}
-                dataKey="value"
-              >
-                {pieData.map((entry, i) => (
-                  <Cell key={i} fill={getTeamColor(entry.name)} />
-                ))}
+              <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value">
+                {pieData.map((entry, i) => <Cell key={i} fill={getTeamColor(entry.name)} />)}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
-              <Legend
-                formatter={(val) => <span style={{ color: "#aaa", fontSize: 11 }}>{val}</span>}
-              />
+              <Legend formatter={(val) => <span style={{ color: "#aaa", fontSize: 11 }}>{val}</span>} />
             </PieChart>
           </ResponsiveContainer>
         </div>
-
-        {/* DNF Chart */}
         <div style={styles.card}>
           <div style={styles.cardTitle}>DNFs by Constructor</div>
           <ResponsiveContainer width="100%" height={280}>
@@ -282,18 +286,14 @@ function TeamsPage() {
               <YAxis type="category" dataKey="name" tick={{ fill: "#aaa", fontSize: 10 }} width={80} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="DNFs" radius={[0, 4, 4, 0]}>
-                {data.map((entry, i) => (
-                  <Cell key={i} fill={getTeamColor(entry.team_name)} />
-                ))}
+                {data.map((entry, i) => <Cell key={i} fill={getTeamColor(entry.team_name)} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-
-      {/* Team Standings Table */}
       <div style={styles.card}>
-        <div style={styles.cardTitle}>2024 Constructor Championship</div>
+        <div style={styles.cardTitle}>{year} Constructor Championship</div>
         <table style={styles.table}>
           <thead>
             <tr>
@@ -306,10 +306,7 @@ function TeamsPage() {
             {data.map((t, i) => (
               <tr key={t.team_name}>
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
-                <td style={styles.td(i)}>
-                  <span style={styles.teamDot(t.team_name)} />
-                  <strong>{t.team_name}</strong>
-                </td>
+                <td style={styles.td(i)}><span style={styles.teamDot(t.team_name)} /><strong>{t.team_name}</strong></td>
                 <td style={styles.td(i)}><span style={styles.statBadge("#e10600")}>{t.total_points}</span></td>
                 <td style={styles.td(i)}>{t.wins}</td>
                 <td style={styles.td(i)}>{t.podiums}</td>
@@ -327,15 +324,17 @@ function TeamsPage() {
 // ── RACES PAGE ────────────────────────────────────────────────────────────────
 function RacesPage() {
   const [races, setRaces] = useState([]);
+  const [year, setYear] = useState(2024);
 
   useEffect(() => {
-    axios.get(`${API}/api/races?year=2024`).then(r => setRaces(r.data));
-  }, []);
+    axios.get(`${API}/api/races?year=${year}`).then(r => setRaces(r.data));
+  }, [year]);
 
   return (
     <div style={styles.page}>
+      <YearSelector year={year} setYear={setYear} />
       <div style={styles.card}>
-        <div style={styles.cardTitle}>2024 Race Calendar</div>
+        <div style={styles.cardTitle}>{year} Race Calendar</div>
         <table style={styles.table}>
           <thead>
             <tr>
