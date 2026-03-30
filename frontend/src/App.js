@@ -443,6 +443,111 @@ function HomePage() {
   );
 }
 
+function LineagePage() {
+  const [lineages, setLineages] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [includeLineage, setIncludeLineage] = useState(true);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API}/api/lineages`).then(r => {
+      setLineages(r.data);
+      setSelected(r.data[0]?.lineage_id);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selected) {
+      axios.get(`${API}/api/team-standings-lineage?lineage_id=${selected}&include_lineage=${includeLineage}`)
+        .then(r => setData(r.data));
+    }
+  }, [selected, includeLineage]);
+
+  return (
+    <div style={styles.page}>
+      {/* Lineage Selector */}
+      <div style={styles.card}>
+        <div style={styles.cardTitle}>Team Lineage Explorer</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.5rem" }}>
+          {lineages.map(l => (
+            <button key={l.lineage_id} onClick={() => setSelected(l.lineage_id)} style={{
+              padding: "6px 16px",
+              background: selected === l.lineage_id ? "#e10600" : "transparent",
+              color: selected === l.lineage_id ? "#fff" : "#666",
+              border: selected === l.lineage_id ? "none" : "1px solid #2a2a2a",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "0.85rem",
+              fontWeight: selected === l.lineage_id ? 700 : 400
+            }}>
+              {l.lineage_name.replace(" Lineage", "")}
+            </button>
+          ))}
+        </div>
+
+        {/* Toggle */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
+          <span style={{ color: "#555", fontSize: "0.75rem", letterSpacing: "2px" }}>MODE</span>
+          <button onClick={() => setIncludeLineage(true)} style={{
+            padding: "4px 14px",
+            background: includeLineage ? "#e10600" : "transparent",
+            color: includeLineage ? "#fff" : "#666",
+            border: includeLineage ? "none" : "1px solid #2a2a2a",
+            borderRadius: "4px", cursor: "pointer", fontSize: "0.85rem"
+          }}>
+            Full Lineage
+          </button>
+          <button onClick={() => setIncludeLineage(false)} style={{
+            padding: "4px 14px",
+            background: !includeLineage ? "#e10600" : "transparent",
+            color: !includeLineage ? "#fff" : "#666",
+            border: !includeLineage ? "none" : "1px solid #2a2a2a",
+            borderRadius: "4px", cursor: "pointer", fontSize: "0.85rem"
+          }}>
+            Name Only
+          </button>
+          <span style={{ color: "#444", fontSize: "0.8rem" }}>
+            {includeLineage
+              ? "Showing combined stats across all historical team names"
+              : "Showing stats per individual team name"}
+          </span>
+        </div>
+
+        {/* Results Table */}
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              {["Team / Era", "Points", "Wins", "Podiums", "DNFs", "Races"].map(h => (
+                <th key={h} style={styles.th}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((t, i) => (
+              <tr key={i}>
+                <td style={styles.td(i)}>
+                  <span style={styles.teamDot(t.team_name)} />
+                  <strong>{t.team_name}</strong>
+                  {t.first_year && (
+                    <span style={{ color: "#444", fontSize: "0.75rem", marginLeft: 8 }}>
+                      {t.first_year}–{t.last_year}
+                    </span>
+                  )}
+                </td>
+                <td style={styles.td(i)}><span style={styles.statBadge("#e10600")}>{t.total_points}</span></td>
+                <td style={styles.td(i)}>{t.wins}</td>
+                <td style={styles.td(i)}>{t.podiums}</td>
+                <td style={styles.td(i)}><span style={{ color: t.dnfs > 5 ? "#ff4444" : "#aaa" }}>{t.dnfs}</span></td>
+                <td style={styles.td(i)}>{t.races}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 export default function App() {
   const [tab, setTab] = useState("home");
@@ -452,6 +557,7 @@ export default function App() {
     { id: "drivers", label: "🧑‍✈️ DRIVERS" },
     { id: "teams", label: "🏎 CONSTRUCTORS" },
     { id: "races", label: "📅 CALENDAR" },
+    { id: "lineage", label: "🔀 LINEAGE" },
   ];
 
   return (
@@ -478,6 +584,8 @@ export default function App() {
       {tab === "drivers" && <DriversPage />}
       {tab === "teams" && <TeamsPage />}
       {tab === "races" && <RacesPage />}
+      {tab === "lineage" && <LineagePage />}
     </div>
   );
+  
 }
