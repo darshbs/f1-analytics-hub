@@ -65,3 +65,62 @@ def get_team_standings(year: int = 2024):
     ''', (year,)).fetchall()
     conn.close()
     return [dict(s) for s in standings]
+
+
+@app.get("/api/team-standings-lineage")
+def get_team_standings_lineage(lineage_id: int, include_lineage: bool = True):
+    conn = get_connection()
+
+    if include_lineage:
+        # Group ALL historical names under the lineage
+        standings = conn.execute('''
+            SELECT
+                tl.lineage_name as team_name,
+                SUM(r.points) as total_points,
+                COUNT(CASE WHEN CAST(r.position AS INTEGER) = 1 THEN 1 END) as wins,
+                COUNT(CASE WHEN CAST(r.position AS INTEGER) <= 3 THEN 1 END) as podiums,
+                COUNT(CASE WHEN r.status NOT LIKE '%Lap%'
+                      AND r.status != 'Finished'
+                      AND r.status NOT LIKE '%+%' THEN 1 END) as dnfs,
+                COUNT(DISTINCT r.race_id) as races,
+                MIN(rc.year) as first_year,
+                MAX(rc.year) as last_year
+            FROM results r
+            JOIN races rc ON r.race_id = rc.id
+            JOIN team_lineage tl ON r.team_name = tl.team_name
+            WHERE tl.lineage_id = ?
+            GROUP BY tl.lineage_name
+        ''', (lineage_id,)).fetchall()
+    else:
+        standings = conn.execute('''
+            SELECT
+                r.team_name,
+                SUM(r.points) as total_points,
+                COUNT(CASE WHEN CAST(r.position AS INTEGER) = 1 THEN 1 END) as wins,
+                COUNT(CASE WHEN CAST(r.position AS INTEGER) <= 3 THEN 1 END) as podiums,
+                COUNT(CASE WHEN r.status NOT LIKE '%Lap%'
+                      AND r.status != 'Finished'
+                      AND r.status NOT LIKE '%+%' THEN 1 END) as dnfs,
+                COUNT(DISTINCT r.race_id) as races
+            FROM results r
+            JOIN races rc ON r.race_id = rc.id
+            JOIN team_lineage tl ON r.team_name = tl.team_name
+            WHERE tl.lineage_id = ?
+            GROUP BY r.team_name
+        ''', (lineage_id,)).fetchall()
+
+    conn.close()
+    return [dict(s) for s in standings]
+
+@app.get("/api/lineages")
+def get_all_lineages():
+    conn = get_connection()
+    lineages = conn.execute('''
+        SELECT DISTINCT lineage_id, lineage_name 
+        FROM team_lineage 
+        ORDER BY lineage_name
+    ''').fetchall()
+    conn.close()
+    return [dict(l) for l in lineages]
+
+    

@@ -38,6 +38,17 @@ def init_db():
         )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS team_lineage (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        team_name TEXT UNIQUE,
+        lineage_id INTEGER,
+        lineage_name TEXT,
+        era_start INTEGER,
+        era_end INTEGER
+    )
+''')
+
     conn.commit()
     conn.close()
     print("Database initialized successfully!")
