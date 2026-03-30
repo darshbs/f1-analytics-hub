@@ -1,4 +1,4 @@
-# <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" height="30"/> F1 ANALYTICS HUB
+# <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" height="30"/> F1 ANALYTICS HUB - FAH
 
 <div align="center">
 
@@ -221,9 +221,9 @@ Combining a passion for Formula 1 with real-world data engineering — FastF1 te
 
 <div align="center">
 
-**Built with 🏎 and data.**
-
-*This project is not affiliated with Formula 1, the FIA, or any F1 team.*  
+*This project is not affiliated with Formula 1, the FIA, or any F1 team.*
 *All data is sourced from the publicly available FastF1 library and Jolpica-F1 API.*
+
+**Made by an F1 fan with love for the sport and data - for F1 fans ❤️**
 
 </div>
