@@ -100,6 +100,8 @@ const styles = {
     borderBottom: "1px solid #1a1a1a",
     fontSize: "0.9rem",
     background: i % 2 === 0 ? "#111" : "#131313",
+    userSelect: "text",
+    cursor: "default",
   }),
   pos: (i) => ({
     color: i === 0 ? "#FFD700" : i === 1 ? "#C0C0C0" : i === 2 ? "#CD7F32" : "#e10600",
@@ -234,8 +236,14 @@ function DriversPage() {
           <tbody>
             {data.map((d, i) => (
               <tr key={d.driver_code}
-                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                onMouseLeave={e => e.currentTarget.style.background = ""}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "#2a2a2a";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                }}
               >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                 <td style={styles.td(i)}><strong>{d.driver_name}</strong></td>
@@ -312,8 +320,14 @@ function TeamsPage() {
           <tbody>
             {data.map((t, i) => (
               <tr key={t.team_name}
-                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                onMouseLeave={e => e.currentTarget.style.background = ""}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "#2a2a2a";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                }}
               >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                 <td style={styles.td(i)}><span style={styles.teamDot(t.team_name)} /><strong>{t.team_name}</strong></td>
@@ -356,8 +370,14 @@ function RacesPage() {
           <tbody>
             {races.map((r, i) => (
               <tr key={r.id}
-                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                onMouseLeave={e => e.currentTarget.style.background = ""}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "#2a2a2a";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                }}
               >
                 <td style={styles.td(i)}><span style={{ color: "#e10600", fontWeight: 700 }}>R{r.round}</span></td>
                 <td style={styles.td(i)}><strong>{r.race_name}</strong></td>
@@ -417,8 +437,14 @@ function HomePage() {
             <tbody>
               {drivers.slice(0, 5).map((d, i) => (
                 <tr key={d.driver_code}
-                  onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "#2a2a2a";
+                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "";
+                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  }}
                 >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                   <td style={styles.td(i)}>
@@ -443,8 +469,14 @@ function HomePage() {
             <tbody>
               {teams.slice(0, 5).map((t, i) => (
                 <tr key={t.team_name}
-                  onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "#2a2a2a";
+                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "";
+                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  }}
                 >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                   <td style={styles.td(i)}>
@@ -544,8 +576,14 @@ function LineagePage() {
           <tbody>
             {data.map((t, i) => (
               <tr key={i}
-                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
-                onMouseLeave={e => e.currentTarget.style.background = ""}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "#2a2a2a";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "";
+                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                }}
               >
                 <td style={styles.td(i)}>
                   <span style={styles.teamDot(t.team_name)} />
