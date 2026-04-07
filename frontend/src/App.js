@@ -817,11 +817,13 @@ export default function App() {
       </div>
 
       {/* Pages */}
-      {tab === "home" && <HomePage />}
-      {tab === "drivers" && <DriversPage />}
-      {tab === "teams" && <TeamsPage />}
-      {tab === "races" && <RacesPage />}
-      {tab === "lineage" && <LineagePage />}
+      <div key={tab} className="page-enter page-enter-active">
+        {tab === "home" && <HomePage />}
+        {tab === "drivers" && <DriversPage />}
+        {tab === "teams" && <TeamsPage />}
+        {tab === "races" && <RacesPage />}
+        {tab === "lineage" && <LineagePage />}
+      </div>
     </div>
   );
 
