@@ -18,6 +18,15 @@ const TEAM_COLORS = {
   "RB": "#6692FF",
   "Williams": "#64C4FF",
   "Kick Sauber": "#52E252",
+  "Racing Point": "#F596C8",
+  "Renault": "#FFD800",
+  "AlphaTauri": "#5E8FAA",
+  "Alfa Romeo Racing": "#C92D4B",
+  "Alfa Romeo": "#C92D4B",
+  "Toro Rosso": "#469BFF",
+  "Force India": "#FF80C7",
+  "Lotus F1 Team": "#FFB800",
+  "Benetton": "#00A650",
 };
 
 const getTeamColor = (team) => TEAM_COLORS[team] || "#e10600";
@@ -74,6 +83,7 @@ const styles = {
     border: "1px solid #222",
     borderRadius: "8px",
     padding: "1.5rem",
+    transition: "border-color 0.2s, box-shadow 0.2s",
   },
   cardTitle: {
     color: "#e10600",
@@ -189,7 +199,16 @@ function DriversPage() {
     <div style={styles.page}>
       <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>Points — Top 10 Drivers</div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData} margin={{ top: 0, right: 10, left: -10, bottom: 0 }}>
@@ -202,7 +221,16 @@ function DriversPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>Race Wins — Top 10 Drivers</div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart
@@ -223,7 +251,16 @@ function DriversPage() {
           </ResponsiveContainer>
         </div>
       </div>
-      <div style={styles.card}>
+      <div style={styles.card}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = "#e10600";
+          e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = "#222";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
         <div style={styles.cardTitle}>{year} Driver Championship</div>
         <table style={styles.table}>
           <thead>
@@ -237,12 +274,18 @@ function DriversPage() {
             {data.map((d, i) => (
               <tr key={d.driver_code}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = "#2a2a2a";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                  const color = getTeamColor(d.team_name);
+                  e.currentTarget.style.background = color + "22";
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = color + "22";
+                    td.style.color = "#fff";
+                  });
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = "";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                    td.style.color = "";
+                  });
                 }}
               >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
@@ -277,7 +320,16 @@ function TeamsPage() {
     <div style={styles.page}>
       <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>Points Distribution by Constructor</div>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
@@ -289,7 +341,16 @@ function TeamsPage() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>DNFs by Constructor</div>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart
@@ -307,7 +368,16 @@ function TeamsPage() {
           </ResponsiveContainer>
         </div>
       </div>
-      <div style={styles.card}>
+      <div style={styles.card}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = "#e10600";
+          e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = "#222";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
         <div style={styles.cardTitle}>{year} Constructor Championship</div>
         <table style={styles.table}>
           <thead>
@@ -321,12 +391,18 @@ function TeamsPage() {
             {data.map((t, i) => (
               <tr key={t.team_name}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = "#2a2a2a";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                  const color = getTeamColor(t.team_name);
+                  e.currentTarget.style.background = color + "22";
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = color + "22";
+                    td.style.color = "#fff";
+                  });
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = "";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                    td.style.color = "";
+                  });
                 }}
               >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
@@ -357,7 +433,16 @@ function RacesPage() {
   return (
     <div style={styles.page}>
       <YearSelector year={year} setYear={setYear} />
-      <div style={styles.card}>
+      <div style={styles.card}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = "#e10600";
+          e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = "#222";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
         <div style={styles.cardTitle}>{year} Race Calendar</div>
         <table style={styles.table}>
           <thead>
@@ -376,7 +461,10 @@ function RacesPage() {
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = "";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                    td.style.color = "";
+                  });
                 }}
               >
                 <td style={styles.td(i)}><span style={{ color: "#e10600", fontWeight: 700 }}>R{r.round}</span></td>
@@ -416,7 +504,16 @@ function HomePage() {
           { label: "Constructor Champion", value: topTeam?.team_name || "—", sub: `${topTeam?.total_points} pts` },
           { label: "Total Races", value: "24", sub: "2024 Season" },
         ].map((stat, i) => (
-          <div key={i} style={{ ...styles.card, textAlign: "center" }}>
+          <div key={i} style={{ ...styles.card, textAlign: "center" }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = "#e10600";
+              e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = "#222";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
             <div style={{ color: "#666", fontSize: "0.7rem", letterSpacing: "2px", marginBottom: 8 }}>{stat.label.toUpperCase()}</div>
             <div style={{ color: "#e10600", fontSize: "1.5rem", fontWeight: 900 }}>{stat.value}</div>
             <div style={{ color: "#555", fontSize: "0.75rem", marginTop: 4 }}>{stat.sub}</div>
@@ -426,7 +523,16 @@ function HomePage() {
 
       {/* Top 5 Drivers + Teams side by side */}
       <div style={styles.grid2}>
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>Top 5 Drivers</div>
           <table style={styles.table}>
             <thead>
@@ -438,12 +544,18 @@ function HomePage() {
               {drivers.slice(0, 5).map((d, i) => (
                 <tr key={d.driver_code}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = "#2a2a2a";
-                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                    const color = getTeamColor(d.team_name);
+                    e.currentTarget.style.background = color + "22";
+                    Array.from(e.currentTarget.cells).forEach(td => {
+                      td.style.background = color + "22";
+                      td.style.color = "#fff";
+                    });
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = "";
-                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                    Array.from(e.currentTarget.cells).forEach(td => {
+                      td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                      td.style.color = "";
+                    });
                   }}
                 >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
@@ -458,7 +570,16 @@ function HomePage() {
           </table>
         </div>
 
-        <div style={styles.card}>
+        <div style={styles.card}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "#e10600";
+            e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "#222";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
           <div style={styles.cardTitle}>Constructor Standings</div>
           <table style={styles.table}>
             <thead>
@@ -470,12 +591,18 @@ function HomePage() {
               {teams.slice(0, 5).map((t, i) => (
                 <tr key={t.team_name}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = "#2a2a2a";
-                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                    const color = getTeamColor(t.team_name);
+                    e.currentTarget.style.background = color + "22";
+                    Array.from(e.currentTarget.cells).forEach(td => {
+                      td.style.background = color + "22";
+                      td.style.color = "#fff";
+                    });
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = "";
-                    Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                    Array.from(e.currentTarget.cells).forEach(td => {
+                      td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                      td.style.color = "";
+                    });
                   }}
                 >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
@@ -517,7 +644,16 @@ function LineagePage() {
   return (
     <div style={styles.page}>
       {/* Lineage Selector */}
-      <div style={styles.card}>
+      <div style={styles.card}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = "#e10600";
+          e.currentTarget.style.boxShadow = "0 0 20px #e1060022";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = "#222";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
         <div style={styles.cardTitle}>Team Lineage Explorer</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.5rem" }}>
           {lineages.map(l => (
@@ -577,12 +713,18 @@ function LineagePage() {
             {data.map((t, i) => (
               <tr key={i}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = "#2a2a2a";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "#2a2a2a");
+                  const color = getTeamColor(t.team_name);
+                  e.currentTarget.style.background = color + "22";
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = color + "22";
+                    td.style.color = "#fff";
+                  });
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = "";
-                  Array.from(e.currentTarget.cells).forEach(td => td.style.background = "");
+                  Array.from(e.currentTarget.cells).forEach(td => {
+                    td.style.background = i % 2 === 0 ? "#111" : "#131313";
+                    td.style.color = "";
+                  });
                 }}
               >
                 <td style={styles.td(i)}>
