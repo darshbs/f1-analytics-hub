@@ -29,7 +29,7 @@ const styles = {
     background: "#0a0a0a",
     minHeight: "100vh",
     color: "#fff",
-    fontFamily: "'Arial', sans-serif",
+    fontFamily: "'Titillium Web', sans-serif",
   },
   header: {
     background: "linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)",
@@ -122,6 +122,10 @@ const styles = {
     fontSize: "0.85rem",
     fontWeight: 700,
   }),
+  trHover: {
+    cursor: "pointer",
+    transition: "background 0.15s",
+  },
 };
 
 // ── Custom Tooltip ───────────────────────────────────────────────────────────
@@ -229,7 +233,10 @@ function DriversPage() {
           </thead>
           <tbody>
             {data.map((d, i) => (
-              <tr key={d.driver_code}>
+              <tr key={d.driver_code}
+                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                onMouseLeave={e => e.currentTarget.style.background = ""}
+              >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                 <td style={styles.td(i)}><strong>{d.driver_name}</strong></td>
                 <td style={styles.td(i)}><span style={styles.teamDot(d.team_name)} />{d.team_name}</td>
@@ -304,7 +311,10 @@ function TeamsPage() {
           </thead>
           <tbody>
             {data.map((t, i) => (
-              <tr key={t.team_name}>
+              <tr key={t.team_name}
+                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                onMouseLeave={e => e.currentTarget.style.background = ""}
+              >
                 <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                 <td style={styles.td(i)}><span style={styles.teamDot(t.team_name)} /><strong>{t.team_name}</strong></td>
                 <td style={styles.td(i)}><span style={styles.statBadge("#e10600")}>{t.total_points}</span></td>
@@ -345,7 +355,10 @@ function RacesPage() {
           </thead>
           <tbody>
             {races.map((r, i) => (
-              <tr key={r.id}>
+              <tr key={r.id}
+                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                onMouseLeave={e => e.currentTarget.style.background = ""}
+              >
                 <td style={styles.td(i)}><span style={{ color: "#e10600", fontWeight: 700 }}>R{r.round}</span></td>
                 <td style={styles.td(i)}><strong>{r.race_name}</strong></td>
                 <td style={styles.td(i)}>{r.circuit}</td>
@@ -403,7 +416,10 @@ function HomePage() {
             </thead>
             <tbody>
               {drivers.slice(0, 5).map((d, i) => (
-                <tr key={d.driver_code}>
+                <tr key={d.driver_code}
+                  onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                   <td style={styles.td(i)}>
                     <span style={styles.teamDot(d.team_name)} />
@@ -426,7 +442,10 @@ function HomePage() {
             </thead>
             <tbody>
               {teams.slice(0, 5).map((t, i) => (
-                <tr key={t.team_name}>
+                <tr key={t.team_name}
+                  onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                  onMouseLeave={e => e.currentTarget.style.background = ""}
+                >
                   <td style={styles.td(i)}><span style={styles.pos(i)}>{i + 1}</span></td>
                   <td style={styles.td(i)}>
                     <span style={styles.teamDot(t.team_name)} />
@@ -524,7 +543,10 @@ function LineagePage() {
           </thead>
           <tbody>
             {data.map((t, i) => (
-              <tr key={i}>
+              <tr key={i}
+                onMouseEnter={e => e.currentTarget.style.background = "#2a2a2a"}
+                onMouseLeave={e => e.currentTarget.style.background = ""}
+              >
                 <td style={styles.td(i)}>
                   <span style={styles.teamDot(t.team_name)} />
                   <strong>{t.team_name}</strong>
@@ -544,6 +566,40 @@ function LineagePage() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+// ── Race Countdown ──────────────────────────────────────────────────────────────────
+function RaceCountdown() {
+  const [timeLeft, setTimeLeft] = useState("");
+  const [nextRace, setNextRace] = useState("");
+
+  useEffect(() => {
+    axios.get(`${API}/api/next-race`).then(r => {
+      setNextRace(r.data.race_name);
+      const tick = () => {
+        const diff = new Date(r.data.date) - new Date();
+        if (diff <= 0) { setTimeLeft("RACE DAY 🏁"); return; }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        setTimeLeft(`${d}d ${h}h ${m}m ${s}s`);
+      };
+      tick();
+      const interval = setInterval(tick, 1000);
+      return () => clearInterval(interval);
+    }).catch(() => setTimeLeft(""));
+  }, []);
+
+  if (!timeLeft) return null;
+
+  return (
+    <div style={{ marginLeft: "auto", textAlign: "right" }}>
+      <div style={{ color: "#555", fontSize: "0.65rem", letterSpacing: "2px" }}>NEXT RACE</div>
+      <div style={{ color: "#fff", fontSize: "0.8rem", fontWeight: 600 }}>{nextRace}</div>
+      <div style={{ color: "#e10600", fontSize: "1rem", fontWeight: 900, letterSpacing: "1px" }}>{timeLeft}</div>
     </div>
   );
 }
@@ -568,6 +624,7 @@ export default function App() {
           <div style={styles.logo}>⬡ F1 ANALYTICS HUB</div>
           <div style={styles.subtitle}>FORMULA ONE DATA PLATFORM</div>
         </div>
+        <RaceCountdown />
       </div>
 
       {/* Tab Navigation */}
@@ -587,5 +644,5 @@ export default function App() {
       {tab === "lineage" && <LineagePage />}
     </div>
   );
-  
+
 }

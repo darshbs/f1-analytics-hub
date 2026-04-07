@@ -123,4 +123,17 @@ def get_all_lineages():
     conn.close()
     return [dict(l) for l in lineages]
 
+@app.get("/api/next-race")
+def get_next_race():
+    conn = get_connection()
+    race = conn.execute('''
+        SELECT race_name, date FROM races
+        WHERE date >= date('now')
+        ORDER BY date ASC LIMIT 1
+    ''').fetchone()
+    conn.close()
+    if race:
+        return {"race_name": race["race_name"], "date": race["date"]}
+    return {"race_name": "Off Season", "date": "2025-03-01"}
+
     
