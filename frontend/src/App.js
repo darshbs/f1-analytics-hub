@@ -157,33 +157,11 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-function YearSelector({ year, setYear }) {
-  return (
-    <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-      <span style={{ color: "#555", fontSize: "0.75rem", letterSpacing: "2px" }}>SEASON</span>
-      {[2020, 2021, 2022, 2023, 2024].map(y => (
-        <button key={y} onClick={() => setYear(y)} style={{
-          padding: "4px 14px",
-          background: year === y ? "#e10600" : "transparent",
-          color: year === y ? "#fff" : "#555",
-          border: year === y ? "none" : "1px solid #2a2a2a",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontWeight: year === y ? 700 : 400,
-          fontSize: "0.85rem",
-          transition: "all 0.2s"
-        }}>
-          {y}
-        </button>
-      ))}
-    </div>
-  );
-}
+
 
 // ── DRIVERS PAGE ─────────────────────────────────────────────────────────────
-function DriversPage() {
+function DriversPage({ year }) {
   const [data, setData] = useState([]);
-  const [year, setYear] = useState(2024);
 
   useEffect(() => {
     axios.get(`${API}/api/driver-standings?year=${year}`).then(r => setData(r.data));
@@ -197,7 +175,6 @@ function DriversPage() {
 
   return (
     <div style={styles.page}>
-      <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
         <div style={styles.card}
           onMouseEnter={e => {
@@ -306,9 +283,8 @@ function DriversPage() {
 }
 
 // ── TEAMS PAGE ────────────────────────────────────────────────────────────────
-function TeamsPage() {
+function TeamsPage({ year }) {
   const [data, setData] = useState([]);
-  const [year, setYear] = useState(2024);
 
   useEffect(() => {
     axios.get(`${API}/api/team-standings?year=${year}`).then(r => setData(r.data));
@@ -318,7 +294,6 @@ function TeamsPage() {
 
   return (
     <div style={styles.page}>
-      <YearSelector year={year} setYear={setYear} />
       <div style={styles.grid2}>
         <div style={styles.card}
           onMouseEnter={e => {
@@ -422,9 +397,8 @@ function TeamsPage() {
 }
 
 // ── RACES PAGE ────────────────────────────────────────────────────────────────
-function RacesPage() {
+function RacesPage({ year }) {
   const [races, setRaces] = useState([]);
-  const [year, setYear] = useState(2024);
 
   useEffect(() => {
     axios.get(`${API}/api/races?year=${year}`).then(r => setRaces(r.data));
@@ -432,7 +406,6 @@ function RacesPage() {
 
   return (
     <div style={styles.page}>
-      <YearSelector year={year} setYear={setYear} />
       <div style={styles.card}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = "#e10600";
@@ -482,14 +455,14 @@ function RacesPage() {
 }
 
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
-function HomePage() {
+function HomePage({ year }) {
   const [drivers, setDrivers] = useState([]);
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API}/api/driver-standings?year=2024`).then(r => setDrivers(r.data));
-    axios.get(`${API}/api/team-standings?year=2024`).then(r => setTeams(r.data));
-  }, []);
+    axios.get(`${API}/api/driver-standings?year=${year}`).then(r => setDrivers(r.data));
+    axios.get(`${API}/api/team-standings?year=${year}`).then(r => setTeams(r.data));
+  }, [year]);
 
   const champion = drivers[0];
   const topTeam = teams[0];
@@ -499,10 +472,10 @@ function HomePage() {
       {/* Hero Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         {[
-          { label: "2024 Champion", value: champion?.driver_name || "—", sub: champion?.team_name },
+          { label: `${year} Champion`, value: champion?.driver_name || "—", sub: champion?.team_name },
           { label: "Champion Points", value: champion?.total_points || "—", sub: "Season total" },
           { label: "Constructor Champion", value: topTeam?.team_name || "—", sub: `${topTeam?.total_points} pts` },
-          { label: "Total Races", value: "24", sub: "2024 Season" },
+          { label: "Total Races", value: "24", sub: `${year} Season` },
         ].map((stat, i) => (
           <div key={i} style={{ ...styles.card, textAlign: "center" }}
             onMouseEnter={e => {
@@ -621,7 +594,7 @@ function HomePage() {
   );
 }
 
-function LineagePage() {
+function LineagePage({ year }) {
   const [lineages, setLineages] = useState([]);
   const [selected, setSelected] = useState(null);
   const [includeLineage, setIncludeLineage] = useState(true);
@@ -787,6 +760,7 @@ function RaceCountdown() {
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 export default function App() {
   const [tab, setTab] = useState("home");
+  const [year, setYear] = useState(2025);
 
   const tabs = [
     { id: "home", label: "🏠 HOME" },
@@ -801,28 +775,47 @@ export default function App() {
       {/* Header */}
       <div style={styles.header}>
         <div>
-          <div style={styles.logo}>⬡ F1 ANALYTICS HUB</div>
+          <div style={styles.logo}>🏎 F1 ANALYTICS HUB - FAH</div>
           <div style={styles.subtitle}>FORMULA ONE DATA PLATFORM</div>
         </div>
         <RaceCountdown />
       </div>
 
       {/* Tab Navigation */}
-      <div style={styles.tabBar}>
-        {tabs.map(t => (
-          <button key={t.id} style={styles.tab(tab === t.id)} onClick={() => setTab(t.id)}>
-            {t.label}
-          </button>
-        ))}
+      <div style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #222" }}>
+        <div style={{ display: "flex", gap: "0.5rem", padding: "1.2rem 2rem 0" }}>
+          {tabs.map(t => (
+            <button key={t.id} style={styles.tab(tab === t.id)} onClick={() => setTab(t.id)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginLeft: "2rem", paddingBottom: "4px" }}>
+          <span style={{ color: "#555", fontSize: "0.75rem", letterSpacing: "2px" }}>SEASON</span>
+          {[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(y => (
+            <button key={y} onClick={() => setYear(y)} style={{
+              padding: "4px 14px",
+              background: year === y ? "#e10600" : "transparent",
+              color: year === y ? "#fff" : "#555",
+              border: year === y ? "none" : "1px solid #2a2a2a",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontWeight: year === y ? 700 : 400,
+              fontSize: "0.85rem",
+            }}>
+              {y}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Pages */}
       <div key={tab} className="page-enter page-enter-active">
-        {tab === "home" && <HomePage />}
-        {tab === "drivers" && <DriversPage />}
-        {tab === "teams" && <TeamsPage />}
-        {tab === "races" && <RacesPage />}
-        {tab === "lineage" && <LineagePage />}
+        {tab === "home" && <HomePage year={year} />}
+        {tab === "drivers" && <DriversPage year={year} />}
+        {tab === "teams" && <TeamsPage year={year} />}
+        {tab === "races" && <RacesPage year={year} />}
+        {tab === "lineage" && <LineagePage year={year} />}
       </div>
     </div>
   );
