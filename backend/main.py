@@ -127,13 +127,16 @@ def get_all_lineages():
 def get_next_race():
     conn = get_connection()
     race = conn.execute('''
-        SELECT race_name, date FROM races
+        SELECT race_name, date, race_time FROM races
         WHERE date >= date('now')
         ORDER BY date ASC LIMIT 1
     ''').fetchone()
     conn.close()
     if race:
-        return {"race_name": race["race_name"], "date": race["date"]}
-    return {"race_name": "Off Season", "date": "2025-03-01"}
-
+        return {
+            "race_name": race["race_name"],
+            "date": race["date"],
+            "race_time": race["race_time"] or "13:00:00"
+        }
+    return {"race_name": "Off Season", "date": None, "race_time": None}
     

@@ -18,7 +18,8 @@ def init_db():
             race_name TEXT,
             circuit TEXT,
             country TEXT,
-            date TEXT
+            date TEXT,
+            race_time TEXT
         )
     ''')
 

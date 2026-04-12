@@ -27,11 +27,18 @@ def seed_season(year: int):
             print(f"  Skipping round {round_num} ({race_name}): {e}")
             continue
 
+        # Get exact race start time in UTC
+        try:
+            session_time = fastf1.get_session(year, round_num, 'R')
+            race_time_utc = str(session_time.date.strftime('%H:%M:%S')) if session_time.date else "13:00:00"
+        except:
+            race_time_utc = "13:00:00"
+
         # Insert race
         cursor.execute('''
-            INSERT INTO races (year, round, race_name, circuit, country, date)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (year, round_num, race_name, circuit, country, date))
+            INSERT INTO races (year, round, race_name, circuit, country, date, race_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (year, round_num, race_name, circuit, country, date, race_time_utc))
         race_id = cursor.lastrowid
 
         # Insert results
@@ -70,4 +77,5 @@ def seed_season(year: int):
     print(f"\n✅ {year} season seeded successfully!")
 
 if __name__ == "__main__":
-    seed_season(2026)
+    for year in [2020, 2021, 2022, 2023, 2024, 2025, 2026]:
+        seed_season(year)

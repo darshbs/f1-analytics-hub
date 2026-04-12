@@ -732,7 +732,8 @@ function RaceCountdown() {
     axios.get(`${API}/api/next-race`).then(r => {
       setNextRace(r.data.race_name);
       const tick = () => {
-        const diff = new Date(r.data.date) - new Date();
+        const raceDate = new Date(r.data.date + "T" + r.data.race_time + "Z");
+        const diff = raceDate - new Date();
         if (diff <= 0) { setTimeLeft("RACE DAY 🏁"); return; }
         const d = Math.floor(diff / 86400000);
         const h = Math.floor((diff % 86400000) / 3600000);
@@ -750,7 +751,7 @@ function RaceCountdown() {
 
   return (
     <div style={{ marginLeft: "auto", textAlign: "right" }}>
-      <div style={{ color: "#555", fontSize: "0.65rem", letterSpacing: "2px" }}>NEXT RACE</div>
+      <div style={{ color: "#b0aeaeff", fontSize: "0.65rem", letterSpacing: "2px" }}>NEXT RACE</div>
       <div style={{ color: "#fff", fontSize: "0.8rem", fontWeight: 600 }}>{nextRace}</div>
       <div style={{ color: "#e10600", fontSize: "1rem", fontWeight: 900, letterSpacing: "1px" }}>{timeLeft}</div>
     </div>
